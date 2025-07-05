@@ -5,10 +5,10 @@
     "description": "A Chrome extension for visualizing browsing history.",
     "permissions": [
         "storage",
-        "history"
+        "history",
+        "tabs"
     ],
     "action": {
-        "default_popup": "popup.html",
         "default_icon": {
             "128": "icons/history.png"
         }
@@ -18,5 +18,11 @@
     },
     "icons": {
         "128": "icons/history.png"
-    }
+    },
+    "web_accessible_resources": [
+        {
+            "resources": ["graph.html", "style.css", "graph.js"],
+            "matches": ["<all_urls>"]
+        }
+    ]
 }

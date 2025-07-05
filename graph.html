@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>History Graph</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>History Dashboard</h1>
+    <div class="charts-grid">
+      <div>
+        <h2>Top Domains (Bar)</h2>
+        <canvas id="barChart"></canvas>
+      </div>
+      <div>
+        <h2>Category Distribution (Pie)</h2>
+        <canvas id="pieChart"></canvas>
+      </div>
+    </div>
+    <h2>Top 10 Visited Domains</h2>
+    <ul id="history-list"></ul>
+  </div>
+  <script src="graph.js"></script>
+</body>
+</html>
