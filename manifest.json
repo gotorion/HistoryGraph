@@ -1,0 +1,22 @@
+{
+    "manifest_version": 3,
+    "name": "HistoryGraph",
+    "version": "1.0",
+    "description": "A Chrome extension for visualizing browsing history.",
+    "permissions": [
+        "storage",
+        "history"
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_icon": {
+            "128": "icons/history.png"
+        }
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "icons": {
+        "128": "icons/history.png"
+    }
+}
