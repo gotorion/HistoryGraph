@@ -1,24 +1,24 @@
 // 全局变量
 let currentHistory = [];
 let charts = {};
+let domainCategoryTable = null;
+let categoryTableLoaded = false;
 
-// 增强的分类字典
-const categoryDict = {
-  "news": ["cnn.com", "bbc.com", "nytimes.com", "news", "reuters.com", "bloomberg.com", "cnbc.com"],
-  "social": ["facebook.com", "twitter.com", "weibo.com", "instagram.com", "social", "linkedin.com", "reddit.com"],
-  "video": ["youtube.com", "bilibili.com", "vimeo.com", "video", "netflix.com", "twitch.tv", "dailymotion.com"],
-  "shopping": ["amazon.com", "jd.com", "taobao.com", "shopping", "ebay.com", "tmall.com", "walmart.com"],
-  "search": ["google.com", "bing.com", "baidu.com", "search", "yahoo.com", "duckduckgo.com"],
-  "tech": ["github.com", "stackoverflow.com", "tech", "medium.com", "dev.to", "gitlab.com"],
-  "education": ["wikipedia.org", "coursera.org", "edx.org", "khanacademy.org", "udemy.com"],
-  "entertainment": ["spotify.com", "pinterest.com", "tumblr.com", "flickr.com", "deviantart.com"],
-  "other": []
-};
+// 常见多级后缀
+const multiLevelTLDs = [
+  'co.uk', 'org.uk', 'gov.uk', 'ac.uk', 'com.cn', 'net.cn', 'org.cn', 'gov.cn', 'com.hk', 'com.tw', 'com.au', 'com.br', 'com.tr', 'com.sa', 'com.sg', 'com.my', 'com.ph', 'com.mx', 'com.ar', 'com.pl', 'com.ru', 'com.ua', 'com.id', 'com.vn', 'com.eg', 'com.ng', 'com.pk', 'com.bd', 'com.co', 'com.pe', 'com.cl', 'com.ec', 'com.bo', 'com.py', 'com.uy', 'com.ve', 'com.do', 'com.gt', 'com.hn', 'com.ni', 'com.pa', 'com.cr', 'com.sv', 'com.cu', 'com.jm', 'com.tt', 'com.bb', 'com.bs', 'com.ag', 'com.ai', 'com.bz', 'com.dm', 'com.gd', 'com.kn', 'com.lc', 'com.ms', 'com.vc', 'com.sr', 'com.gy', 'com.fj', 'com.pg', 'com.sb', 'com.to', 'com.ws', 'com.ki', 'com.nr', 'com.tv', 'com.fm', 'com.cx', 'com.cc', 'com.nu', 'com.tk', 'com.mw', 'com.na', 'com.sz', 'com.bw', 'com.ls', 'com.mg', 'com.mu', 'com.sc', 'com.sd', 'com.sl', 'com.sn', 'com.tg', 'com.tn', 'com.ug', 'com.zm', 'com.zw', 'com.cm', 'com.ci', 'com.dj', 'com.er', 'com.et', 'com.ga', 'com.gm', 'com.gn', 'com.gq', 'com.lr', 'com.ml', 'com.ne', 'com.rw', 'com.st', 'com.td', 'com.tg', 'com.tz', 'com.bf', 'com.bi', 'com.cg', 'com.cd', 'com.cf', 'com.cv', 'com.dj', 'com.gq', 'com.gw', 'com.km', 'com.mr', 'com.so', 'com.td', 'com.tg', 'com.tn', 'com.ao', 'com.bj', 'com.bf', 'com.ci', 'com.cm', 'com.dj', 'com.dz', 'com.eg', 'com.er', 'com.et', 'com.ga', 'com.gh', 'com.gm', 'com.gn', 'com.gq', 'com.ke', 'com.km', 'com.lr', 'com.ls', 'com.ly', 'com.ma', 'com.mg', 'com.ml', 'com.mr', 'com.mu', 'com.mw', 'com.na', 'com.ne', 'com.ng', 'com.rw', 'com.sc', 'com.sd', 'com.sl', 'com.sn', 'com.so', 'com.st', 'com.sz', 'com.td', 'com.tg', 'com.tn', 'com.ug', 'com.zm', 'com.zw'
+];
+
+// 加载本地域名分类表
+fetch('domain_categories.json')
+  .then(res => res.json())
+  .then(json => { domainCategoryTable = json; categoryTableLoaded = true; loadHistoryData(); })
+  .catch(() => { domainCategoryTable = null; categoryTableLoaded = true; loadHistoryData(); });
 
 // 初始化
 document.addEventListener("DOMContentLoaded", () => {
   initializeEventListeners();
-  loadHistoryData();
+  // loadHistoryData(); // 不再直接调用loadHistoryData
 });
 
 // 初始化事件监听器
@@ -31,6 +31,7 @@ function initializeEventListeners() {
 
 // 加载历史数据
 function loadHistoryData() {
+  if (!categoryTableLoaded) return; // 分类表未加载完，等待
   const timeRange = document.getElementById('timeRange').value;
   
   chrome.runtime.sendMessage({ 
@@ -121,11 +122,30 @@ function processHistoryData() {
   updateLists(domainMap, recentVisits);
 }
 
+// 提取主域名，支持多级后缀
+function getRootDomain(domain) {
+  domain = domain.replace(/^www\./, '');
+  for (const tld of multiLevelTLDs) {
+    if (domain.endsWith('.' + tld)) {
+      const parts = domain.split('.');
+      return parts.slice(-tld.split('.').length - 1).join('.');
+    }
+  }
+  const parts = domain.split('.');
+  if (parts.length > 2) {
+    return parts.slice(-2).join('.');
+  }
+  return domain;
+}
+
 // 获取网站分类
 function getCategory(domain) {
-  for (const [cat, arr] of Object.entries(categoryDict)) {
-    if (arr.some(key => domain.includes(key))) return cat;
+  const root = getRootDomain(domain);
+  if (domainCategoryTable && domainCategoryTable[root]) {
+    return domainCategoryTable[root];
   }
+  // 调试输出
+  // console.log('未分类:', domain, '主域名:', root);
   return "other";
 }
 
