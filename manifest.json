@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "HistoryGraph",
     "version": "1.0",
-    "description": "A Chrome extension for visualizing browsing history.",
+    "description": "A Chrome extension for visualizing browsing history with advanced analytics like Vivaldi browser.",
     "permissions": [
         "storage",
         "history",
@@ -11,7 +11,8 @@
     "action": {
         "default_icon": {
             "128": "icons/history.png"
-        }
+        },
+        "default_title": "HistoryGraph - 浏览历史分析"
     },
     "background": {
         "service_worker": "background.js"
@@ -21,7 +22,7 @@
     },
     "web_accessible_resources": [
         {
-            "resources": ["graph.html", "style.css", "graph.js"],
+            "resources": ["graph.html", "style.css", "graph.js", "test.html"],
             "matches": ["<all_urls>"]
         }
     ]

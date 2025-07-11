@@ -4,11 +4,48 @@
   <meta charset="UTF-8">
   <title>History Graph</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="chart.js"></script>
+  <script src="chartjs-adapter-date-fns.js"></script>
 </head>
 <body>
   <div class="container">
     <h1>History Dashboard</h1>
+    
+    <!-- 时间范围选择器 -->
+    <div class="controls">
+      <div class="time-range-selector">
+        <label for="timeRange">时间范围:</label>
+        <select id="timeRange">
+          <option value="7days">最近7天</option>
+          <option value="30days">最近30天</option>
+          <option value="90days">最近90天</option>
+          <option value="all">全部历史</option>
+        </select>
+        <button id="refreshBtn">刷新数据</button>
+      </div>
+    </div>
+
+    <!-- 统计概览 -->
+    <div class="stats-overview">
+      <div class="stat-card">
+        <h3>总访问次数</h3>
+        <div id="totalVisits" class="stat-value">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>访问网站数</h3>
+        <div id="uniqueDomains" class="stat-value">0</div>
+      </div>
+      <div class="stat-card">
+        <h3>最活跃时段</h3>
+        <div id="peakHour" class="stat-value">-</div>
+      </div>
+      <div class="stat-card">
+        <h3>最常访问</h3>
+        <div id="topDomain" class="stat-value">-</div>
+      </div>
+    </div>
+
+    <!-- 图表网格 -->
     <div class="charts-grid">
       <div>
         <h2>Top Domains (Bar)</h2>
@@ -19,8 +56,49 @@
         <canvas id="pieChart"></canvas>
       </div>
     </div>
-    <h2>Top 10 Visited Domains</h2>
-    <ul id="history-list"></ul>
+
+    <!-- 时间分析图表 -->
+    <div class="charts-grid">
+      <div>
+        <h2>访问时间分布 (Line)</h2>
+        <canvas id="timeChart"></canvas>
+      </div>
+      <div>
+        <h2>每日访问趋势 (Line)</h2>
+        <canvas id="dailyChart"></canvas>
+      </div>
+    </div>
+
+    <!-- 热力图 -->
+    <div class="heatmap-container">
+      <h2>访问热力图</h2>
+      <div id="heatmap"></div>
+    </div>
+
+    <!-- 搜索关键词分析 -->
+    <div class="search-analysis">
+      <h2>搜索关键词分析</h2>
+      <div id="searchKeywords"></div>
+    </div>
+
+    <!-- 详细列表 -->
+    <div class="detailed-lists">
+      <div class="list-section">
+        <h2>Top 10 Visited Domains</h2>
+        <ul id="history-list"></ul>
+      </div>
+      <div class="list-section">
+        <h2>最近访问记录</h2>
+        <ul id="recent-list"></ul>
+      </div>
+    </div>
+
+    <!-- 导出功能 -->
+    <div class="export-section">
+      <h2>数据导出</h2>
+      <button id="exportCSV">导出CSV</button>
+      <button id="exportJSON">导出JSON</button>
+    </div>
   </div>
   <script src="graph.js"></script>
 </body>
