@@ -50,6 +50,7 @@ function getAllHistory(callback) {
   chrome.history.search(
     {
       text: '',
+      startTime: 0, // 修复：获取全部历史
       maxResults: 100000
     },
     (results) => {

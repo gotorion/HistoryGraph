@@ -6,14 +6,14 @@ body {
 }
 
 .container {
-  width: 80vw;
+  width: 100vw;
   max-width: 1200px;
-  min-width: 400px;
-  margin: 48px auto;
+  min-width: 0;
+  margin: 32px auto;
   background: #fff;
-  border-radius: 6px;
+  border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0,0,0,0.10);
-  padding: 40px 48px 32px 48px;
+  padding: 24px;
   box-sizing: border-box;
 }
 
