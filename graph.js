@@ -428,7 +428,9 @@ function updateLists(domainMap, recentVisits) {
     const li = document.createElement('li');
     li.className = 'mb-2';
     const timeStr = new Date(visit.time).toLocaleString();
+    const faviconUrl = `https://www.google.com/s2/favicons?sz=32&domain=${visit.domain}`;
     li.innerHTML = `
+      <img src="${faviconUrl}" alt="favicon" class="mr-2" style="width:20px;height:20px;vertical-align:middle;border-radius:4px;">
       <span class="icon has-text-success mr-2"><i class="fas fa-clock"></i></span>
       <span class="has-text-weight-semibold">${visit.domain}</span>
       <span class="tag is-light ml-2">${timeStr}</span>
