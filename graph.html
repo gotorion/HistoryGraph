@@ -5,11 +5,117 @@
   <title>History Graph</title>
   <link rel="stylesheet" href="bulma.min.css">
   <style>
+    html, body {
+      background: linear-gradient(135deg, #e9ecf3 0%, #d1d7e6 100%);
+      min-height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
+    }
+    .container.is-fluid {
+      background: rgba(252,253,255,0.97);
+      border-radius: 18px;
+      box-shadow: 0 8px 32px 0 rgba(31,38,135,0.10);
+      padding: 32px 24px 32px 24px;
+      margin-top: 40px;
+      margin-bottom: 40px;
+      max-width: 980px;
+      min-width: 320px;
+      width: 90vw;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .box {
+      border-radius: 14px;
+      box-shadow: 0 2px 12px 0 rgba(120,130,180,0.07);
+      transition: box-shadow 0.2s, transform 0.2s;
+      background: rgba(255,255,255,0.99);
+    }
+    .box:hover {
+      box-shadow: 0 6px 24px 0 rgba(120,130,180,0.13);
+      transform: translateY(-2px) scale(1.01);
+    }
+    .button.is-link, .button.is-success, .button.is-dark {
+      background: linear-gradient(90deg, #7b93b6 0%, #b3b8d0 100%);
+      color: #fff;
+      border: none;
+      box-shadow: 0 2px 8px rgba(120,130,180,0.08);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .button.is-link:hover, .button.is-success:hover, .button.is-dark:hover {
+      background: linear-gradient(90deg, #b3b8d0 0%, #7b93b6 100%);
+      box-shadow: 0 4px 16px rgba(120,130,180,0.16);
+    }
+    .title, .subtitle, .heading {
+      color: #2d3a4b !important;
+      letter-spacing: 0.5px;
+    }
+    .menu-list li, .menu-list li span, .menu-list li .tag {
+      transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+    }
+    .menu-list li:hover {
+      background: #f0f6ff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(79,140,255,0.08);
+    }
+    .menu-list li .has-text-weight-semibold {
+      color: #485fc7;
+    }
+    .tag.is-link.is-light, .tag.is-info, .tag.is-success {
+      background: linear-gradient(90deg, #7b93b6 0%, #b3b8d0 100%);
+      color: #fff;
+      border: none;
+    }
+    .tag.is-light {
+      background: #f5f7fa;
+      color: #2d3a4b;
+    }
+    .box.has-text-centered {
+      background: linear-gradient(90deg, #e3e6f0 0%, #f6f7fa 100%);
+    }
+    .select select, .input, .textarea {
+      background: #f5f7fa;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      color: #2d3a4b;
+      transition: border 0.2s;
+    }
+    .select select:focus, .input:focus, .textarea:focus {
+      border: 1.5px solid #4f8cff;
+      outline: none;
+    }
+    .subtitle.is-6 {
+      color: #6b7280 !important;
+      font-weight: 500;
+    }
+    .has-text-link-dark {
+      color: #2d3a4b !important;
+    }
+    .mr-2 { margin-right: 0.5rem !important; }
+    .ml-2 { margin-left: 0.5rem !important; }
+    .ml-3 { margin-left: 1rem !important; }
+    .mb-2 { margin-bottom: 0.5rem !important; }
+    .mb-5 { margin-bottom: 2rem !important; }
+    .mb-6 { margin-bottom: 3rem !important; }
+    .mt-5 { margin-top: 2rem !important; }
+    .mb-6 { margin-bottom: 3rem !important; }
+    /* 响应式优化 */
+    @media (max-width: 900px) {
+      .container.is-fluid { padding: 12px 2vw; }
+      .columns { flex-direction: column; }
+      .column { width: 100%; }
+    }
+    @media (max-width: 600px) {
+      .container.is-fluid { padding: 2px 0.5vw; }
+      .box { padding: 0.8rem; }
+      .title { font-size: 1.3rem; }
+    }
     canvas {
       max-width: 100%;
+      width: 100%;
       height: 320px !important;
       display: block;
       margin: 0 auto;
+      aspect-ratio: unset !important;
     }
   </style>
   <script src="chart.js"></script>
@@ -128,11 +234,11 @@
     </div>
 
     <!-- 导出功能 -->
-    <div class="box has-text-centered">
+    <!-- <div class="box has-text-centered">
       <p class="subtitle is-6 mb-2">数据导出</p>
       <button id="exportCSV" class="button is-success mr-3">导出CSV</button>
       <button id="exportJSON" class="button is-dark">导出JSON</button>
-    </div>
+    </div> -->
   </div>
   <script src="graph.js"></script>
 </body>

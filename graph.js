@@ -25,8 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
 function initializeEventListeners() {
   document.getElementById('timeRange').addEventListener('change', loadHistoryData);
   document.getElementById('refreshBtn').addEventListener('click', loadHistoryData);
-  document.getElementById('exportCSV').addEventListener('click', exportToCSV);
-  document.getElementById('exportJSON').addEventListener('click', exportToJSON);
+  // document.getElementById('exportCSV').addEventListener('click', exportToCSV);
+  // document.getElementById('exportJSON').addEventListener('click', exportToJSON);
 }
 
 // 加载历史数据
@@ -437,51 +437,4 @@ function updateLists(domainMap, recentVisits) {
     `;
     recentList.appendChild(li);
   });
-}
-
-// 导出为CSV
-function exportToCSV() {
-  const headers = ['域名', '访问次数', '分类', '最后访问时间'];
-  const rows = currentHistory.map(entry => {
-    try {
-      const url = new URL(entry.url);
-      const domain = url.hostname.replace(/^www\./, '');
-      const category = getCategory(domain);
-      const time = new Date(entry.lastVisitTime || 0).toLocaleString();
-      return [domain, entry.visitCount || 1, category, time];
-    } catch (e) {
-      return ['', '', '', ''];
-    }
-  });
-  
-  const csvContent = [headers, ...rows]
-    .map(row => row.map(cell => `"${cell}"`).join(','))
-    .join('\n');
-  
-  downloadFile(csvContent, 'history_data.csv', 'text/csv');
-}
-
-// 导出为JSON
-function exportToJSON() {
-  const data = {
-    exportTime: new Date().toISOString(),
-    totalRecords: currentHistory.length,
-    data: currentHistory
-  };
-  
-  const jsonContent = JSON.stringify(data, null, 2);
-  downloadFile(jsonContent, 'history_data.json', 'application/json');
-}
-
-// 下载文件
-function downloadFile(content, filename, mimeType) {
-  const blob = new Blob([content], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 }
