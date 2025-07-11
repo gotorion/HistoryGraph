@@ -3,101 +3,135 @@
 <head>
   <meta charset="UTF-8">
   <title>History Graph</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="bulma.min.css">
+  <style>
+    canvas {
+      max-width: 100%;
+      height: 320px !important;
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
   <script src="chart.js"></script>
   <script src="chartjs-adapter-date-fns.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h1>History Dashboard</h1>
+  <div class="container is-fluid mt-5 mb-6">
+    <h1 class="title has-text-centered has-text-link-dark mb-5">History Dashboard</h1>
     
     <!-- 时间范围选择器 -->
-    <div class="controls">
-      <div class="time-range-selector">
-        <label for="timeRange">时间范围:</label>
-        <select id="timeRange">
-          <option value="7days">最近7天</option>
-          <option value="30days">最近30天</option>
-          <option value="90days">最近90天</option>
-          <option value="all">全部历史</option>
-        </select>
-        <button id="refreshBtn">刷新数据</button>
+    <div class="field is-horizontal">
+      <div class="field-label is-normal">
+        <label class="label" for="timeRange">时间范围</label>
+      </div>
+      <div class="field-body">
+        <div class="field">
+          <div class="control">
+            <div class="select">
+              <select id="timeRange">
+                <option value="7days">最近7天</option>
+                <option value="30days">最近30天</option>
+                <option value="90days">最近90天</option>
+                <option value="all">全部历史</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <div class="control">
+            <button id="refreshBtn" class="button is-link is-light ml-3">刷新数据</button>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- 统计概览 -->
-    <div class="stats-overview">
-      <div class="stat-card">
-        <h3>总访问次数</h3>
-        <div id="totalVisits" class="stat-value">0</div>
+    <div class="columns is-multiline">
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="heading">总访问次数</p>
+          <p id="totalVisits" class="title is-4 has-text-link">0</p>
+        </div>
       </div>
-      <div class="stat-card">
-        <h3>访问网站数</h3>
-        <div id="uniqueDomains" class="stat-value">0</div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="heading">访问网站数</p>
+          <p id="uniqueDomains" class="title is-4 has-text-link">0</p>
+        </div>
       </div>
-      <div class="stat-card">
-        <h3>最活跃时段</h3>
-        <div id="peakHour" class="stat-value">-</div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="heading">最活跃时段</p>
+          <p id="peakHour" class="title is-4 has-text-link">-</p>
+        </div>
       </div>
-      <div class="stat-card">
-        <h3>最常访问</h3>
-        <div id="topDomain" class="stat-value">-</div>
+      <div class="column is-3">
+        <div class="box has-text-centered">
+          <p class="heading">最常访问</p>
+          <p id="topDomain" class="title is-4 has-text-link">-</p>
+        </div>
       </div>
     </div>
 
     <!-- 图表网格 -->
-    <div class="charts-grid">
-      <div>
-        <h2>Top Domains (Bar)</h2>
-        <canvas id="barChart"></canvas>
+    <div class="columns">
+      <div class="column is-6">
+        <div class="box">
+          <p class="subtitle is-6 mb-2">Top Domains (Bar)</p>
+          <canvas id="barChart"></canvas>
+        </div>
       </div>
-      <div>
-        <h2>Category Distribution (Pie)</h2>
-        <canvas id="pieChart"></canvas>
+      <div class="column is-6">
+        <div class="box">
+          <p class="subtitle is-6 mb-2">Category Distribution (Pie)</p>
+          <canvas id="pieChart"></canvas>
+        </div>
       </div>
     </div>
 
     <!-- 时间分析图表 -->
-    <div class="charts-grid">
-      <div>
-        <h2>访问时间分布 (Line)</h2>
-        <canvas id="timeChart"></canvas>
+    <div class="columns">
+      <div class="column is-6">
+        <div class="box">
+          <p class="subtitle is-6 mb-2">访问时间分布 (Line)</p>
+          <canvas id="timeChart"></canvas>
+        </div>
       </div>
-      <div>
-        <h2>每日访问趋势 (Line)</h2>
-        <canvas id="dailyChart"></canvas>
+      <div class="column is-6">
+        <div class="box">
+          <p class="subtitle is-6 mb-2">每日访问趋势 (Line)</p>
+          <canvas id="dailyChart"></canvas>
+        </div>
       </div>
-    </div>
-
-    <!-- 热力图 -->
-    <div class="heatmap-container">
-      <h2>访问热力图</h2>
-      <div id="heatmap"></div>
     </div>
 
     <!-- 搜索关键词分析 -->
-    <div class="search-analysis">
-      <h2>搜索关键词分析</h2>
+    <div class="box">
+      <p class="subtitle is-6 mb-2">搜索关键词分析</p>
       <div id="searchKeywords"></div>
     </div>
 
     <!-- 详细列表 -->
-    <div class="detailed-lists">
-      <div class="list-section">
-        <h2>Top 10 Visited Domains</h2>
-        <ul id="history-list"></ul>
+    <div class="columns">
+      <div class="column is-6">
+        <div class="box">
+          <p class="subtitle is-6 mb-2">Top 10 Visited Domains</p>
+          <ul id="history-list" class="menu-list"></ul>
+        </div>
       </div>
-      <div class="list-section">
-        <h2>最近访问记录</h2>
-        <ul id="recent-list"></ul>
+      <div class="column is-6">
+        <div class="box">
+          <p class="subtitle is-6 mb-2">最近访问记录</p>
+          <ul id="recent-list" class="menu-list"></ul>
+        </div>
       </div>
     </div>
 
     <!-- 导出功能 -->
-    <div class="export-section">
-      <h2>数据导出</h2>
-      <button id="exportCSV">导出CSV</button>
-      <button id="exportJSON">导出JSON</button>
+    <div class="box has-text-centered">
+      <p class="subtitle is-6 mb-2">数据导出</p>
+      <button id="exportCSV" class="button is-success mr-3">导出CSV</button>
+      <button id="exportJSON" class="button is-dark">导出JSON</button>
     </div>
   </div>
   <script src="graph.js"></script>

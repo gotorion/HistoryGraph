@@ -112,9 +112,6 @@ function processHistoryData() {
   // 更新图表
   updateCharts(domainMap, categoryMap, timeMap, dailyMap);
   
-  // 更新热力图
-  updateHeatmap(currentHistory);
-  
   // 更新搜索关键词
   updateSearchKeywords(searchKeywords);
   
@@ -355,51 +352,6 @@ function updateDailyChart(dailyMap) {
   });
 }
 
-// 更新热力图
-function updateHeatmap(history) {
-  const heatmap = document.getElementById('heatmap');
-  heatmap.innerHTML = '';
-  
-  // 初始化7x24的网格
-  const grid = Array(7).fill().map(() => Array(24).fill(0));
-  
-  // 统计每个时间段的访问次数
-  history.forEach(entry => {
-    if (entry.lastVisitTime) {
-      const date = new Date(entry.lastVisitTime);
-      const dayOfWeek = date.getDay();
-      const hour = date.getHours();
-      grid[dayOfWeek][hour]++;
-    }
-  });
-  
-  // 找到最大值用于归一化
-  const maxValue = Math.max(...grid.flat());
-  
-  // 创建热力图单元格
-  for (let day = 0; day < 7; day++) {
-    for (let hour = 0; hour < 24; hour++) {
-      const cell = document.createElement('div');
-      cell.className = 'heatmap-cell';
-      
-      const value = grid[day][hour];
-      const intensity = maxValue > 0 ? value / maxValue : 0;
-      
-      // 根据强度设置颜色
-      const color = intensity > 0.8 ? '#ff4444' :
-                   intensity > 0.6 ? '#ff6666' :
-                   intensity > 0.4 ? '#ff8888' :
-                   intensity > 0.2 ? '#ffaaaa' :
-                   '#e1e8ed';
-      
-      cell.style.backgroundColor = color;
-      cell.title = `${getDayName(day)} ${hour}:00 - ${value} 次访问`;
-      
-      heatmap.appendChild(cell);
-    }
-  }
-}
-
 // 获取星期名称
 function getDayName(day) {
   const days = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
@@ -422,12 +374,24 @@ function updateSearchKeywords(keywords) {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 20);
   
-  sortedKeywords.forEach(([keyword, count]) => {
+  if (sortedKeywords.length === 0) {
+    container.innerHTML = '<p class="has-text-grey">暂无关键词数据</p>';
+    return;
+  }
+  const tagGroup = document.createElement('div');
+  tagGroup.className = 'tags are-medium';
+  sortedKeywords.forEach(([keyword, count], idx) => {
     const span = document.createElement('span');
-    span.className = 'search-keyword';
+    // 颜色渐变：前3个is-link，4-7 is-info，8-12 is-success，其他is-light
+    let color = 'is-light';
+    if (idx < 3) color = 'is-link';
+    else if (idx < 7) color = 'is-info';
+    else if (idx < 12) color = 'is-success';
+    span.className = `tag ${color} mb-2`;
     span.textContent = `${keyword} (${count})`;
-    container.appendChild(span);
+    tagGroup.appendChild(span);
   });
+  container.appendChild(tagGroup);
 }
 
 // 更新列表
@@ -439,9 +403,16 @@ function updateLists(domainMap, recentVisits) {
   
   const list = document.getElementById('history-list');
   list.innerHTML = "";
-  sorted.forEach(([domain, count]) => {
+  sorted.forEach(([domain, count], idx) => {
     const li = document.createElement('li');
-    li.innerHTML = `<span class="domain">${domain}</span><span class="count">${count}</span>`;
+    li.className = 'mb-2';
+    const faviconUrl = `https://www.google.com/s2/favicons?sz=32&domain=${domain}`;
+    li.innerHTML = `
+      <img src="${faviconUrl}" alt="favicon" class="mr-2" style="width:20px;height:20px;vertical-align:middle;border-radius:4px;">
+      <span class="has-text-weight-semibold">${domain}</span>
+      <span class="tag is-link is-light ml-2">${count} 次</span>
+      <span class="tag is-rounded is-info ml-2">TOP ${idx + 1}</span>
+    `;
     list.appendChild(li);
   });
   
@@ -455,10 +426,12 @@ function updateLists(domainMap, recentVisits) {
   
   sortedRecent.forEach(visit => {
     const li = document.createElement('li');
+    li.className = 'mb-2';
     const timeStr = new Date(visit.time).toLocaleString();
     li.innerHTML = `
-      <span class="domain">${visit.domain}</span>
-      <span class="recent-time">${timeStr}</span>
+      <span class="icon has-text-success mr-2"><i class="fas fa-clock"></i></span>
+      <span class="has-text-weight-semibold">${visit.domain}</span>
+      <span class="tag is-light ml-2">${timeStr}</span>
     `;
     recentList.appendChild(li);
   });
